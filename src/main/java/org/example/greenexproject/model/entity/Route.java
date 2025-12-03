@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.greenexproject.model.enums.DayOfWeek;
+import org.example.greenexproject.model.enums.RouteStatus;
+import org.example.greenexproject.model.enums.Shift;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
