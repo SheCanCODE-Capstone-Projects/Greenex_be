@@ -1,0 +1,174 @@
+package org.example.greenexproject.service;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
+import org.example.greenexproject.dto.request.CompanyRegistrationRequest;
+import org.example.greenexproject.dto.request.LoginRequest;
+import org.example.greenexproject.dto.request.RegisterRequest;
+import org.example.greenexproject.dto.response.AuthResponse;
+import org.example.greenexproject.exception.UnauthorizedException;
+import org.example.greenexproject.model.entity.*;
+import org.example.greenexproject.model.enums.*;
+import org.example.greenexproject.repository.*;
+import org.example.greenexproject.security.JwtTokenProvider;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class AuthService {
+    private final SystemUserRepository systemUserRepository;
+    private final AdminUserRepository adminUserRepository;
+    private final CompanyUserRepository companyUserRepository;
+    private final WasteCompanyRepository wasteCompanyRepository;
+    private final NotificationRepository notificationRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public AuthResponse register(RegisterRequest request) throws BadRequestException {
+        // Validate unique email and phone
+        if (systemUserRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("Email is already registered");
+        }
+        if (systemUserRepository.existsByPhone(request.getPhone())) {
+            throw new BadRequestException("Phone number is already registered");
+        }
+
+        // Create system user
+        SystemUser systemUser = SystemUser.builder()
+                .fullName(request.getFullName())
+                .phone(request.getPhone())
+                .email(request.getEmail())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .userType(request.getUserType())
+                .status(UserStatus.ACTIVE)
+                .build();
+
+        systemUser = systemUserRepository.save(systemUser);
+
+        // Create role-specific record
+        if (request.getUserType() == UserType.ADMIN) {
+            AdminUser adminUser = AdminUser.builder()
+                    .systemUser(systemUser)
+                    .status(UserStatus.ACTIVE)
+                    .build();
+            adminUserRepository.save(adminUser);
+        }
+
+        // Generate token
+        String token = jwtTokenProvider.generateToken(
+                systemUser.getId(),
+                systemUser.getEmail(),
+                systemUser.getUserType().name(),
+                null
+        );
+
+        return AuthResponse.builder()
+                .token(token)
+                .userId(systemUser.getId())
+                .email(systemUser.getEmail())
+                .fullName(systemUser.getFullName())
+                .userType(systemUser.getUserType().name())
+                .build();
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        // Find user
+        SystemUser systemUser = systemUserRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
+
+        // Verify password
+        if (!passwordEncoder.matches(request.getPassword(), systemUser.getPasswordHash())) {
+            throw new UnauthorizedException("Invalid email or password");
+        }
+
+        // Check if user is active
+        if (systemUser.getStatus() != UserStatus.ACTIVE) {
+            throw new UnauthorizedException("Account is not active");
+        }
+
+        // Get company ID if manager or driver
+        UUID companyId = null;
+        if (systemUser.getUserType() == UserType.COMPANY_MANAGER ||
+                systemUser.getUserType() == UserType.COMPANY_DRIVER) {
+            companyId = companyUserRepository.findBySystemUser_Id(systemUser.getId())
+                    .map(cu -> cu.getWasteCompany().getId())
+                    .orElse(null);
+        }
+
+        // Generate token
+        String token = jwtTokenProvider.generateToken(
+                systemUser.getId(),
+                systemUser.getEmail(),
+                systemUser.getUserType().name(),
+                companyId
+        );
+
+        return AuthResponse.builder()
+                .token(token)
+                .userId(systemUser.getId())
+                .email(systemUser.getEmail())
+                .fullName(systemUser.getFullName())
+                .userType(systemUser.getUserType().name())
+                .companyId(companyId)
+                .build();
+    }
+
+    public void registerCompany(UUID managerId, CompanyRegistrationRequest request) throws BadRequestException {
+        // Validate manager user exists
+        SystemUser manager = systemUserRepository.findById(managerId)
+                .orElseThrow(() -> new BadRequestException("Manager user not found"));
+
+        if (manager.getUserType() != UserType.COMPANY_MANAGER) {
+            throw new BadRequestException("Only company managers can register companies");
+        }
+
+        // Check if company name already exists
+        if (wasteCompanyRepository.existsByName(request.getName())) {
+            throw new BadRequestException("Company name already exists");
+        }
+
+        if (request.getContractNumber() != null &&
+                wasteCompanyRepository.existsByContractNumber(request.getContractNumber())) {
+            throw new BadRequestException("Contract number already exists");
+        }
+
+        // Create company
+        WasteCompany company = WasteCompany.builder()
+                .name(request.getName())
+                .contractNumber(request.getContractNumber())
+                .sectorCoverage(request.getSectorCoverage())
+                .createdBy(manager)
+                .status(UserStatus.INACTIVE)
+                .registrationStatus(RegistrationStatus.PENDING)
+                .build();
+
+        company = wasteCompanyRepository.save(company);
+
+        // Create company user relationship
+        CompanyUser companyUser = CompanyUser.builder()
+                .systemUser(manager)
+                .wasteCompany(company)
+                .role(CompanyRole.MANAGER)
+                .status(UserStatus.PENDING)
+                .build();
+
+        companyUserRepository.save(companyUser);
+
+        // Notify all admins
+        List<AdminUser> admins = adminUserRepository.findAll();
+        for (AdminUser admin : admins) {
+            Notification notification = Notification.builder()
+                    .recipientUser(admin.getSystemUser())
+                    .type(NotificationType.COMPANY_REGISTERED)
+                    .message("New company registration pending: " + request.getName())
+                    .build();
+            notificationRepository.save(notification);
+        }
+    }
+}

@@ -1,0 +1,18 @@
+package org.example.greenexproject.model.enums;
+
+public enum NotificationType {
+    COMPANY_REGISTERED,
+    COMPANY_APPROVED,
+    COMPANY_REJECTED,
+    NEW_COMPLAINT,
+    COMPLAINT_RESOLVED,
+    COMPLAINT_UPDATED,
+    PAYMENT_SUCCESS,
+    PAYMENT_REMINDER,
+    BILL_GENERATED,
+    PICKUP_COMPLETED,
+    PICKUP_SKIPPED,
+    ROUTE_ASSIGNED,
+    SESSION_ASSIGNED,
+    GENERAL
+}
