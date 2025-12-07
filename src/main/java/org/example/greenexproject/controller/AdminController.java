@@ -46,7 +46,7 @@ public class AdminController {
         adminService.approveCompany(companyId);
         return ResponseEntity.ok(new MessageResponse("Company approved successfully"));
     }
-//get rejected companies
+
     @PostMapping("/companies/{companyId}/reject")
     @Operation(summary = "Reject company",
             description = "Reject a pending company registration with a reason")
