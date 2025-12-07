@@ -31,7 +31,7 @@ public class WasteCompanyService {
         return repository.save(company);
     }
 
-
+    // Reject a company
     public WasteCompany rejectCompany(UUID companyId) {
         WasteCompany company = repository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Company not found"));

@@ -31,7 +31,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public AuthResponse register(RegisterRequest request) throws BadRequestException {
-        // Validate unique email and phone
+
         if (systemUserRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Email is already registered");
         }
@@ -39,7 +39,7 @@ public class AuthService {
             throw new BadRequestException("Phone number is already registered");
         }
 
-        // Create system user
+
         SystemUser systemUser = SystemUser.builder()
                 .fullName(request.getFullName())
                 .phone(request.getPhone())
@@ -51,7 +51,7 @@ public class AuthService {
 
         systemUser = systemUserRepository.save(systemUser);
 
-        // Create role-specific record
+
         if (request.getUserType() == UserType.ADMIN) {
             AdminUser adminUser = AdminUser.builder()
                     .systemUser(systemUser)
@@ -60,7 +60,7 @@ public class AuthService {
             adminUserRepository.save(adminUser);
         }
 
-        // Generate token
+
         String token = jwtTokenProvider.generateToken(
                 systemUser.getId(),
                 systemUser.getEmail(),
@@ -78,21 +78,21 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        // Find user
+
         SystemUser systemUser = systemUserRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
-        // Verify password
-        if (!passwordEncoder.matches(request.getPassword(), systemUser.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getPassword(),
+                systemUser.getPasswordHash())) {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        // Check if user is active
+
         if (systemUser.getStatus() != UserStatus.ACTIVE) {
             throw new UnauthorizedException("Account is not active");
         }
 
-        // Get company ID if manager or driver
+
         UUID companyId = null;
         if (systemUser.getUserType() == UserType.COMPANY_MANAGER ||
                 systemUser.getUserType() == UserType.COMPANY_DRIVER) {
@@ -101,7 +101,7 @@ public class AuthService {
                     .orElse(null);
         }
 
-        // Generate token
+
         String token = jwtTokenProvider.generateToken(
                 systemUser.getId(),
                 systemUser.getEmail(),
@@ -120,7 +120,7 @@ public class AuthService {
     }
 
     public void registerCompany(UUID managerId, CompanyRegistrationRequest request) throws BadRequestException {
-        // Validate manager user exists
+
         SystemUser manager = systemUserRepository.findById(managerId)
                 .orElseThrow(() -> new BadRequestException("Manager user not found"));
 
@@ -128,7 +128,7 @@ public class AuthService {
             throw new BadRequestException("Only company managers can register companies");
         }
 
-        // Check if company name already exists
+
         if (wasteCompanyRepository.existsByName(request.getName())) {
             throw new BadRequestException("Company name already exists");
         }
@@ -138,7 +138,7 @@ public class AuthService {
             throw new BadRequestException("Contract number already exists");
         }
 
-        // Create company
+
         WasteCompany company = WasteCompany.builder()
                 .name(request.getName())
                 .contractNumber(request.getContractNumber())
@@ -150,7 +150,7 @@ public class AuthService {
 
         company = wasteCompanyRepository.save(company);
 
-        // Create company user relationship
+
         CompanyUser companyUser = CompanyUser.builder()
                 .systemUser(manager)
                 .wasteCompany(company)
@@ -160,7 +160,7 @@ public class AuthService {
 
         companyUserRepository.save(companyUser);
 
-        // Notify all admins
+
         List<AdminUser> admins = adminUserRepository.findAll();
         for (AdminUser admin : admins) {
             Notification notification = Notification.builder()

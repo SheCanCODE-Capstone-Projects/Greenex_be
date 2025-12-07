@@ -62,7 +62,7 @@ public class AdminService {
             manager.getSystemUser().setStatus(UserStatus.ACTIVE);
             companyUserRepository.save(manager);
 
-
+// company approved notification
             Notification notification = Notification.builder()
                     .recipientUser(manager.getSystemUser())
                     .type(NotificationType.COMPANY_APPROVED)
