@@ -10,7 +10,7 @@ import org.example.greenexproject.model.enums.UserStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+// warehouse company response
 @Data
 @Builder
 @NoArgsConstructor

@@ -18,12 +18,12 @@ public class WasteCompanyService {
         this.repository = repository;
     }
 
-    // Get all pending companies
+
     public Page<WasteCompany> getPendingCompanies(Pageable pageable) {
         return repository.findByRegistrationStatus(RegistrationStatus.PENDING, pageable);
     }
 
-    // Approve a company
+
     public WasteCompany approveCompany(UUID companyId) {
         WasteCompany company = repository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Company not found"));

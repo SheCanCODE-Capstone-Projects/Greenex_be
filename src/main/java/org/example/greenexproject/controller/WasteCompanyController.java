@@ -26,7 +26,7 @@ public class WasteCompanyController {
     ) {
         return service.getPendingCompanies(PageRequest.of(page, size));
     }
-
+//get approved companies
     @PatchMapping("/{companyId}/approve")
     public WasteCompany approveCompany(@PathVariable UUID companyId) {
         return service.approveCompany(companyId);
