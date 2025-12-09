@@ -25,4 +25,5 @@ public class WasteCompanyResponse {
     private String createdByName;
     private String createdByEmail;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

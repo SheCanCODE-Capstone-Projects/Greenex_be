@@ -22,7 +22,7 @@ public class WasteCompanyController {
     @GetMapping("/pending")
     public Page<WasteCompany> getPendingCompanies(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "11") int size
     ) {
         return service.getPendingCompanies(PageRequest.of(page, size));
     }

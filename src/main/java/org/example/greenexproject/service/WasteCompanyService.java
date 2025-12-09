@@ -26,7 +26,7 @@ public class WasteCompanyService {
 
     public WasteCompany approveCompany(UUID companyId) {
         WasteCompany company = repository.findById(companyId)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
+                .orElseThrow(() -> new RuntimeException("Company not Found"));
         company.setRegistrationStatus(RegistrationStatus.APPROVED);
         return repository.save(company);
     }
