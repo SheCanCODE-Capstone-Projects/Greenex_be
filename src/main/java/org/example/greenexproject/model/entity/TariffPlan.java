@@ -32,15 +32,18 @@ public class TariffPlan {
     @Column(nullable = false, length = 200)
     private String name;
 
+    @Column(length = 500)
+    private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private BillingFrequency billingFrequency;
 
     @Column(nullable = false)
-    private LocalDate activeFrom;
+    private LocalDate effectiveFrom;
 
     @Column
-    private LocalDate activeTo;
+    private LocalDate effectiveTo;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
