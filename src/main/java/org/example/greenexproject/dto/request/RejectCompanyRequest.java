@@ -7,6 +7,6 @@ import lombok.Data;
 public class RejectCompanyRequest {
 
 
-    @NotBlank(message = "Rejection reason is required")
+    @NotBlank(message = "Rejection Reason is Required")
     private String reason;
 }

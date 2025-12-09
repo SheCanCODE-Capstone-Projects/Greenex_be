@@ -93,7 +93,7 @@ public class AdminService {
             Notification notification = Notification.builder()
                     .recipientUser(manager.getSystemUser())
                     .type(NotificationType.COMPANY_REJECTED)
-                    .message("Your company registration for '" + company.getName() +
+                    .message("Your Company Registration for '" + company.getName() +
                             "' has been rejected. Reason: " + request.getReason())
                     .build();
             notificationRepository.save(notification);

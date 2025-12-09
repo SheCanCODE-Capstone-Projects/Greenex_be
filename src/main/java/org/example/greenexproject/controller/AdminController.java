@@ -49,7 +49,7 @@ public class AdminController {
 
     @PostMapping("/companies/{companyId}/reject")
     @Operation(summary = "Reject company",
-            description = "Reject a pending company registration with a reason")
+            description = "Reject a pending company registration with a Reason")
     public ResponseEntity<MessageResponse> rejectCompany(
             @PathVariable UUID companyId,
             @Valid
