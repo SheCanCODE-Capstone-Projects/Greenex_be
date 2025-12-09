@@ -1,9 +1,8 @@
-package org.example.greenexproject.service;
+package org.example.greenexproject.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
-import org.example.greenexproject.dto.request.CompanyRegistrationRequest;
 import org.example.greenexproject.dto.request.LoginRequest;
 import org.example.greenexproject.dto.request.RegisterRequest;
 import org.example.greenexproject.dto.response.AuthResponse;
@@ -31,7 +30,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public AuthResponse register(RegisterRequest request) throws BadRequestException {
-        // Validate unique email and phone
+
         if (systemUserRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Email is already registered");
         }
@@ -128,21 +127,16 @@ public class AuthService {
             throw new BadRequestException("Only company managers can register companies");
         }
 
-        // Check if company name already exists
-        if (wasteCompanyRepository.existsByName(request.getName())) {
+
+        if (wasteCompanyRepository.existsByName(request.getCompanyName())) {
             throw new BadRequestException("Company name already exists");
         }
 
-        if (request.getContractNumber() != null &&
-                wasteCompanyRepository.existsByContractNumber(request.getContractNumber())) {
-            throw new BadRequestException("Contract number already exists");
-        }
 
-        // Create company
         WasteCompany company = WasteCompany.builder()
-                .name(request.getName())
-                .contractNumber(request.getContractNumber())
-                .sectorCoverage(request.getSectorCoverage())
+                .name(request.getCompanyName())
+                .contractNumber(request.getRegistrationNumber())
+                .sectorCoverage("")
                 .createdBy(manager)
                 .status(UserStatus.INACTIVE)
                 .registrationStatus(RegistrationStatus.PENDING)
@@ -166,7 +160,7 @@ public class AuthService {
             Notification notification = Notification.builder()
                     .recipientUser(admin.getSystemUser())
                     .type(NotificationType.COMPANY_REGISTERED)
-                    .message("New company registration pending: " + request.getName())
+                    .message("New company registration pending: " + request.getCompanyName())  // Changed
                     .build();
             notificationRepository.save(notification);
         }
