@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface HouseholdRepository extends JpaRepository<Household, UUID> {
+    long countByZone_Id(UUID zoneId);
 }
