@@ -30,6 +30,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final OtpService otpService;
+    private final EmailService emailService;
+
     public AuthResponse register(RegisterRequest request) throws BadRequestException {
 
         if (systemUserRepository.existsByEmail(request.getEmail())) {
@@ -38,7 +41,9 @@ public class AuthService {
         if (systemUserRepository.existsByPhone(request.getPhone())) {
             throw new BadRequestException("Phone number is already registered");
         }
-
+        if (request.getPhone().length() != 10) {
+            throw new BadRequestException("Phone number must be exactly 10 digits");
+        }
 
         SystemUser systemUser = SystemUser.builder()
                 .fullName(request.getFullName())
@@ -46,52 +51,91 @@ public class AuthService {
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .userType(request.getUserType())
-                .status(UserStatus.ACTIVE)
+                .status(UserStatus.PENDING)
                 .build();
 
         systemUser = systemUserRepository.save(systemUser);
 
-
         if (request.getUserType() == UserType.ADMIN) {
             AdminUser adminUser = AdminUser.builder()
                     .systemUser(systemUser)
-                    .status(UserStatus.ACTIVE)
+                    .status(UserStatus.PENDING)
                     .build();
             adminUserRepository.save(adminUser);
         }
 
-
-        String token = jwtTokenProvider.generateToken(
-                systemUser.getId(),
-                systemUser.getEmail(),
-                systemUser.getUserType().name(),
-                null
-        );
+        try {
+            // Generate OTP linked to email and 5-minute expiry
+            String otp = otpService.generateOtp(systemUser.getEmail());
+            emailService.sendOtpEmail(systemUser.getEmail(), otp);
+        } catch (Exception e) {
+            System.err.println("Warning: OTP/email sending failed: " + e.getMessage());
+        }
 
         return AuthResponse.builder()
-                .token(token)
                 .userId(systemUser.getId())
                 .email(systemUser.getEmail())
                 .fullName(systemUser.getFullName())
                 .userType(systemUser.getUserType().name())
+                .message("Registration successful. OTP sent to email.")
                 .build();
     }
 
-    public AuthResponse login(LoginRequest request) {
+    // New method: verify OTP only
+    public boolean verifyOtp(String otp) {
+        String email = otpService.validateOtp(otp);
+        if (email == null) {
+            return false; // invalid or expired OTP
+        }
 
+        // Activate user
+        systemUserRepository.findByEmail(email).ifPresent(user -> {
+            user.setStatus(UserStatus.ACTIVE);
+            systemUserRepository.save(user);
+
+            if (user.getUserType() == UserType.ADMIN) {
+                adminUserRepository.findBySystemUser_Id(user.getId())
+                        .ifPresent(admin -> {
+                            admin.setStatus(UserStatus.ACTIVE);
+                            adminUserRepository.save(admin);
+                        });
+            }
+        });
+
+        return true;
+    }
+
+    public void activateUserByEmail(String email) throws BadRequestException {
+        SystemUser user = systemUserRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found with email: " + email));
+
+        if (user.getStatus() == UserStatus.ACTIVE) {
+            throw new BadRequestException("User is already active");
+        }
+
+        user.setStatus(UserStatus.ACTIVE);
+        systemUserRepository.save(user);
+
+        if (user.getUserType() == UserType.ADMIN) {
+            adminUserRepository.findBySystemUser_Id(user.getId())
+                    .ifPresent(admin -> {
+                        admin.setStatus(UserStatus.ACTIVE);
+                        adminUserRepository.save(admin);
+                    });
+        }
+    }
+
+    public AuthResponse login(LoginRequest request) {
         SystemUser systemUser = systemUserRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
-        if (!passwordEncoder.matches(request.getPassword(),
-                systemUser.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getPassword(), systemUser.getPasswordHash())) {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-
         if (systemUser.getStatus() != UserStatus.ACTIVE) {
-            throw new UnauthorizedException("Account is not active");
+            throw new UnauthorizedException("Account not verified. Please confirm OTP.");
         }
-
 
         UUID companyId = null;
         if (systemUser.getUserType() == UserType.COMPANY_MANAGER ||
@@ -100,7 +144,6 @@ public class AuthService {
                     .map(cu -> cu.getWasteCompany().getId())
                     .orElse(null);
         }
-
 
         String token = jwtTokenProvider.generateToken(
                 systemUser.getId(),
@@ -120,14 +163,12 @@ public class AuthService {
     }
 
     public void registerCompany(UUID managerId, CompanyRegistrationRequest request) throws BadRequestException {
-
         SystemUser manager = systemUserRepository.findById(managerId)
                 .orElseThrow(() -> new BadRequestException("Manager user not found"));
 
         if (manager.getUserType() != UserType.COMPANY_MANAGER) {
             throw new BadRequestException("Only company managers can register companies");
         }
-
 
         if (wasteCompanyRepository.existsByName(request.getName())) {
             throw new BadRequestException("Company name already exists");
@@ -137,7 +178,6 @@ public class AuthService {
                 wasteCompanyRepository.existsByContractNumber(request.getContractNumber())) {
             throw new BadRequestException("Contract number already exists");
         }
-
 
         WasteCompany company = WasteCompany.builder()
                 .name(request.getName())
@@ -150,7 +190,6 @@ public class AuthService {
 
         company = wasteCompanyRepository.save(company);
 
-
         CompanyUser companyUser = CompanyUser.builder()
                 .systemUser(manager)
                 .wasteCompany(company)
@@ -159,7 +198,6 @@ public class AuthService {
                 .build();
 
         companyUserRepository.save(companyUser);
-
 
         List<AdminUser> admins = adminUserRepository.findAll();
         for (AdminUser admin : admins) {

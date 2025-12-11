@@ -27,4 +27,5 @@ public class AuthResponse {
 
     private UUID companyId;
     private String otp;
+    private String message;
 }

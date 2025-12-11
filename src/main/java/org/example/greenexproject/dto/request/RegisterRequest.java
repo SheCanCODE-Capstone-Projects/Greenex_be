@@ -1,9 +1,6 @@
 package org.example.greenexproject.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.example.greenexproject.model.enums.UserType;
 
@@ -14,6 +11,9 @@ public class RegisterRequest {
     private String fullName;
 
     @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
+
+
     private String phone;
 
     @NotBlank(message = "Email is required")
