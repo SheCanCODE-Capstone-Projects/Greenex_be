@@ -1,7 +1,7 @@
-package org.example.greenexproject.controller;
+package org.example.greenexproject.Controller;
 
 import org.example.greenexproject.model.entity.WasteCompany;
-import org.example.greenexproject.service.WasteCompanyService;
+import org.example.greenexproject.Service.WasteCompanyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;

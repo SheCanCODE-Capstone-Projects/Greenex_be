@@ -1,4 +1,4 @@
-package org.example.greenexproject.config;
+package org.example.greenexproject.Config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.greenexproject.security.JwtAuthenticationFilter;

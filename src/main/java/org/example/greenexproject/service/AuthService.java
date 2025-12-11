@@ -1,4 +1,4 @@
-package org.example.greenexproject.service;
+package org.example.greenexproject.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

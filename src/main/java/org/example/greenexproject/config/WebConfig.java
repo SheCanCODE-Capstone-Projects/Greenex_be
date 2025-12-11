@@ -1,4 +1,4 @@
-package org.example.greenexproject.config;
+package org.example.greenexproject.Config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -10,6 +10,6 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new CustomPageableArgumentResolver());
+        resolvers.add(new org.example.greenexproject.Config.CustomPageableArgumentResolver());
     }
 }

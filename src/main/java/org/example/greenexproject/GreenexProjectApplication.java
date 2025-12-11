@@ -9,5 +9,4 @@ public class GreenexProjectApplication {
     public static void main(String[] args) {
         SpringApplication.run(GreenexProjectApplication.class, args);
     }
-
 }
