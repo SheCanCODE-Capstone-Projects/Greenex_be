@@ -10,7 +10,4 @@ import java.util.UUID;
 @Repository
 public interface CitizenAccountRepository extends JpaRepository<CitizenAccount, UUID> {
     Optional<CitizenAccount> findByCitizenUser_Id(UUID citizenUserId);
-    default Optional<CitizenAccount> findBySystemUser_Id(UUID systemUserId) {
-        return findByCitizenUser_Id(systemUserId);
-    }
 }
