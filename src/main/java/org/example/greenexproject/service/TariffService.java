@@ -1,4 +1,4 @@
-package org.example.greenexproject.service;
+package org.example.greenexproject.Service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.greenexproject.dto.request.CreateTariffPlanRequest;

@@ -1,4 +1,4 @@
-package org.example.greenexproject.controller;
+package org.example.greenexproject.Controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,7 +11,7 @@ import org.example.greenexproject.dto.request.RegisterRequest;
 import org.example.greenexproject.dto.response.AuthResponse;
 import org.example.greenexproject.dto.response.MessageResponse;
 import org.example.greenexproject.security.UserPrincipal;
-import org.example.greenexproject.service.AuthService;
+import org.example.greenexproject.Service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

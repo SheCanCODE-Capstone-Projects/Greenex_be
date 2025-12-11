@@ -1,4 +1,4 @@
-package org.example.greenexproject.controller;
+package org.example.greenexproject.Controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -11,7 +11,7 @@ import org.example.greenexproject.dto.response.MessageResponse;
 import org.example.greenexproject.dto.response.TariffPlanResponse;
 import org.example.greenexproject.dto.response.TariffRuleResponse;
 import org.example.greenexproject.security.UserPrincipal;
-import org.example.greenexproject.service.TariffService;
+import org.example.greenexproject.Service.TariffService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

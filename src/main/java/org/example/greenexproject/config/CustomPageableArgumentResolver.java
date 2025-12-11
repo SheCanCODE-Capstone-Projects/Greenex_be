@@ -1,4 +1,4 @@
-package org.example.greenexproject.config;
+package org.example.greenexproject.Config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
