@@ -3,7 +3,6 @@ package org.example.greenexproject.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
-import org.example.greenexproject.dto.request.CompanyRegistrationRequest;
 import org.example.greenexproject.dto.request.LoginRequest;
 import org.example.greenexproject.dto.request.RegisterRequest;
 import org.example.greenexproject.dto.response.AuthResponse;
@@ -129,20 +128,23 @@ public class AuthService {
         }
 
 
+<<<<<<< HEAD
         if (wasteCompanyRepository.existsByName(request.getName())) {
+=======
+        if (wasteCompanyRepository.existsByName(request.getCompanyName())) {
+>>>>>>> 7e75073 (Review and manage  citizen notification)
             throw new BadRequestException("Company name already exists");
         }
 
-        if (request.getContractNumber() != null &&
-                wasteCompanyRepository.existsByContractNumber(request.getContractNumber())) {
-            throw new BadRequestException("Contract number already exists");
-        }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7e75073 (Review and manage  citizen notification)
         WasteCompany company = WasteCompany.builder()
-                .name(request.getName())
-                .contractNumber(request.getContractNumber())
-                .sectorCoverage(request.getSectorCoverage())
+                .name(request.getCompanyName())
+                .contractNumber(request.getRegistrationNumber())
+                .sectorCoverage("")
                 .createdBy(manager)
                 .status(UserStatus.INACTIVE)
                 .registrationStatus(RegistrationStatus.PENDING)
@@ -166,7 +168,7 @@ public class AuthService {
             Notification notification = Notification.builder()
                     .recipientUser(admin.getSystemUser())
                     .type(NotificationType.COMPANY_REGISTERED)
-                    .message("New company registration pending: " + request.getName())
+                    .message("New company registration pending: " + request.getCompanyName())  // Changed
                     .build();
             notificationRepository.save(notification);
         }
