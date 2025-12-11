@@ -63,4 +63,8 @@ public class AuthController {
                     .body(new MessageResponse("Invalid or expired OTP."));
         }
     }
+
+    public OtpService getOtpService() {
+        return otpService;
+    }
 }

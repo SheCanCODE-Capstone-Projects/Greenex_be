@@ -25,7 +25,7 @@ public class CustomPageableArgumentResolver extends PageableHandlerMethodArgumen
 
         String sortParam = webRequest.getParameter("sort");
 
-        // If sort parameter looks like a JSON array, parse it
+
         if (sortParam != null && sortParam.startsWith("[")) {
             try {
                 List<String> sortFields = objectMapper.readValue(sortParam, new TypeReference<List<String>>() {});
@@ -46,11 +46,11 @@ public class CustomPageableArgumentResolver extends PageableHandlerMethodArgumen
                     return PageRequest.of(page, size);
                 }
             } catch (Exception e) {
-                // Fall back to default resolver
+
             }
         }
 
-        // Use default Spring behavior for standard sort parameters
+
         return super.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);
     }
 }

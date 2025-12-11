@@ -10,7 +10,7 @@ import java.util.Random;
 @Service
 public class OtpService {
 
-    // otp -> email + expiry
+
     private final Map<String, OtpEntry> otpStore = new ConcurrentHashMap<>();
 
     private static class OtpEntry {
@@ -23,26 +23,26 @@ public class OtpService {
         }
     }
 
-    // Generate 6-digit OTP
+
     public String generateOtp(String email) {
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000);
-        Instant expiresAt = Instant.now().plusSeconds(300); // 5 minutes
+        Instant expiresAt = Instant.now().plusSeconds(300);
         otpStore.put(String.valueOf(otp), new OtpEntry(email, expiresAt));
         return String.valueOf(otp);
     }
 
-    // Validate OTP without needing email
+
     public String validateOtp(String otp) {
         OtpEntry entry = otpStore.get(otp);
-        if (entry == null) return null; // invalid OTP
+        if (entry == null) return null;
 
         if (Instant.now().isAfter(entry.expiresAt)) {
-            otpStore.remove(otp); // expired
+            otpStore.remove(otp);
             return null;
         }
 
-        otpStore.remove(otp); // remove after success
-        return entry.email; // return associated email
+        otpStore.remove(otp);
+        return entry.email;
     }
 }
