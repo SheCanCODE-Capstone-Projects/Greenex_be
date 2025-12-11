@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.greenexproject.dto.request.ContactRequest;
 import org.example.greenexproject.dto.response.ContactResponse;
 import org.example.greenexproject.Service.ContactService;
+import org.example.greenexproject.dto.response.MessageResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,27 +20,32 @@ public class ContactController {
 
     private final ContactService contactService;
 
-    // Public endpoint for users to submit contact messages
+    // Public endpoint: anyone can submit a contact message
     @PostMapping("/contact")
     public ResponseEntity<ContactResponse> createContact(@Valid @RequestBody ContactRequest request) {
         ContactResponse response = contactService.createContact(request);
         return ResponseEntity.ok(response);
     }
 
-    // Admin endpoints (secure these in SecurityConfig)
-    @GetMapping("/admin/contact")
+    // Admin endpoints (secured)
+    @GetMapping("/contact")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ContactResponse>> listAll() {
         return ResponseEntity.ok(contactService.getAllContacts());
     }
 
-    @GetMapping("/admin/contact/{id}")
+    @GetMapping("/contact/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ContactResponse> getOne(@PathVariable UUID id) {
         return ResponseEntity.ok(contactService.getContact(id));
     }
 
-    @PostMapping("/admin/contact/{id}/processed")
-    public ResponseEntity<Void> markProcessed(@PathVariable UUID id) {
-        contactService.markProcessed(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/contact/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<MessageResponse> deleteContact(@PathVariable UUID id) {
+        contactService.deleteContact(id);
+        return ResponseEntity.ok(new MessageResponse("Deleted successfully"));
     }
+
+
 }

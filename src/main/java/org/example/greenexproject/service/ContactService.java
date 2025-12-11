@@ -11,4 +11,5 @@ public interface ContactService {
     List<ContactResponse> getAllContacts();
     ContactResponse getContact(UUID id);
     void markProcessed(UUID id);
+    void deleteContact(UUID id);
 }

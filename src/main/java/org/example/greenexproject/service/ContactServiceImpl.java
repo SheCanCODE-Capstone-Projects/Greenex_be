@@ -54,6 +54,11 @@ public class ContactServiceImpl implements ContactService {
         repository.save(m);
     }
 
+    @Override
+    public void deleteContact(UUID id) {
+
+    }
+
     private ContactResponse mapToResponse(Contact m) {
         return ContactResponse.builder()
                 .id(m.getId())

@@ -126,51 +126,43 @@ public class AuthService {
         if (manager.getUserType() != UserType.COMPANY_MANAGER) {
             throw new BadRequestException("Only company managers can register companies");
         }
-
-
-<<<<<<< HEAD
-        if (wasteCompanyRepository.existsByName(request.getName())) {
-=======
-        if (wasteCompanyRepository.existsByName(request.getCompanyName())) {
->>>>>>> 7e75073 (Review and manage  citizen notification)
-            throw new BadRequestException("Company name already exists");
-        }
-
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 7e75073 (Review and manage  citizen notification)
-        WasteCompany company = WasteCompany.builder()
-                .name(request.getCompanyName())
-                .contractNumber(request.getRegistrationNumber())
-                .sectorCoverage("")
-                .createdBy(manager)
-                .status(UserStatus.INACTIVE)
-                .registrationStatus(RegistrationStatus.PENDING)
-                .build();
-
-        company = wasteCompanyRepository.save(company);
-
-
-        CompanyUser companyUser = CompanyUser.builder()
-                .systemUser(manager)
-                .wasteCompany(company)
-                .role(CompanyRole.MANAGER)
-                .status(UserStatus.PENDING)
-                .build();
-
-        companyUserRepository.save(companyUser);
-
-
-        List<AdminUser> admins = adminUserRepository.findAll();
-        for (AdminUser admin : admins) {
-            Notification notification = Notification.builder()
-                    .recipientUser(admin.getSystemUser())
-                    .type(NotificationType.COMPANY_REGISTERED)
-                    .message("New company registration pending: " + request.getCompanyName())  // Changed
-                    .build();
-            notificationRepository.save(notification);
-        }
+//        if (wasteCompanyRepository.existsByName(request.getName())) {
+//            if (wasteCompanyRepository.existsByName(request.getCompanyName())) {
+//                throw new BadRequestException("Company name already exists");
+//            }
+//
+//
+//            WasteCompany company = WasteCompany.builder()
+//                    .name(request.getCompanyName())
+//                    .contractNumber(request.getRegistrationNumber())
+//                    .sectorCoverage("")
+//                    .createdBy(manager)
+//                    .status(UserStatus.INACTIVE)
+//                    .registrationStatus(RegistrationStatus.PENDING)
+//                    .build();
+//
+//            company = wasteCompanyRepository.save(company);
+//
+//
+//            CompanyUser companyUser = CompanyUser.builder()
+//                    .systemUser(manager)
+//                    .wasteCompany(company)
+//                    .role(CompanyRole.MANAGER)
+//                    .status(UserStatus.PENDING)
+//                    .build();
+//
+//            companyUserRepository.save(companyUser);
+//
+//
+//            List<AdminUser> admins = adminUserRepository.findAll();
+//            for (AdminUser admin : admins) {
+//                Notification notification = Notification.builder()
+//                        .recipientUser(admin.getSystemUser())
+//                        .type(NotificationType.COMPANY_REGISTERED)
+//                        .message("New company registration pending: " + request.getCompanyName())  // Changed
+//                        .build();
+//                notificationRepository.save(notification);
+//            }
+//        }
     }
 }
