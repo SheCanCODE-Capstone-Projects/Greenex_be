@@ -22,11 +22,11 @@ public class CitizenAccount {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "system_user_id", nullable = false, unique = true)
-    private SystemUser systemUser;
+    private SystemUser citizenUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "household_id", nullable = false, unique = true)
     private Household household;
 

@@ -47,6 +47,12 @@ public class Household {
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
+    @Column(length = 500)
+    private String notes;
+
+    @OneToOne(mappedBy = "household", fetch = FetchType.LAZY)
+    private CitizenAccount citizenAccount;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
