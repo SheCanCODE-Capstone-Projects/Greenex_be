@@ -1,9 +1,8 @@
-package org.example.greenexproject.Service;
+package org.example.greenexproject.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.greenexproject.dto.response.CitizenNotificationResponse;
-import org.example.greenexproject.dto.response.NotificationCountResponse;
 import org.example.greenexproject.model.entity.Notification;
 import org.example.greenexproject.model.enums.NotificationType;
 import org.example.greenexproject.repository.NotificationRepository;

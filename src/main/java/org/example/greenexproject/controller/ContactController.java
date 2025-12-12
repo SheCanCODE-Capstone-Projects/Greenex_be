@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.greenexproject.dto.request.ContactRequest;
 import org.example.greenexproject.dto.response.ContactResponse;
-import org.example.greenexproject.Service.ContactService;
+import org.example.greenexproject.service.ContactService;
 import org.example.greenexproject.dto.response.MessageResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,4 +1,4 @@
-package org.example.greenexproject.Service;
+package org.example.greenexproject.service;
 
 import org.example.greenexproject.model.entity.WasteCompany;
 import org.example.greenexproject.model.enums.RegistrationStatus;

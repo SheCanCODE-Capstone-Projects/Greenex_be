@@ -1,12 +1,10 @@
-package org.example.greenexproject.Service;
+package org.example.greenexproject.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.greenexproject.dto.request.ContactRequest;
 import org.example.greenexproject.dto.response.ContactResponse;
 import org.example.greenexproject.model.entity.Contact;
 import org.example.greenexproject.repository.ContactRepository;
-import org.example.greenexproject.repository.ContactRepository;
-import org.example.greenexproject.Service.ContactService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
