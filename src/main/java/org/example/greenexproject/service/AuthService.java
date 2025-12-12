@@ -1,4 +1,4 @@
-package org.example.greenexproject.Service;
+package org.example.greenexproject.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.example.greenexproject.security.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -126,43 +125,8 @@ public class AuthService {
         if (manager.getUserType() != UserType.COMPANY_MANAGER) {
             throw new BadRequestException("Only company managers can register companies");
         }
-//        if (wasteCompanyRepository.existsByName(request.getName())) {
-//            if (wasteCompanyRepository.existsByName(request.getCompanyName())) {
-//                throw new BadRequestException("Company name already exists");
-//            }
-//
-//
-//            WasteCompany company = WasteCompany.builder()
-//                    .name(request.getCompanyName())
-//                    .contractNumber(request.getRegistrationNumber())
-//                    .sectorCoverage("")
-//                    .createdBy(manager)
-//                    .status(UserStatus.INACTIVE)
-//                    .registrationStatus(RegistrationStatus.PENDING)
-//                    .build();
-//
-//            company = wasteCompanyRepository.save(company);
-//
-//
-//            CompanyUser companyUser = CompanyUser.builder()
-//                    .systemUser(manager)
-//                    .wasteCompany(company)
-//                    .role(CompanyRole.MANAGER)
-//                    .status(UserStatus.PENDING)
-//                    .build();
-//
-//            companyUserRepository.save(companyUser);
-//
-//
-//            List<AdminUser> admins = adminUserRepository.findAll();
-//            for (AdminUser admin : admins) {
-//                Notification notification = Notification.builder()
-//                        .recipientUser(admin.getSystemUser())
-//                        .type(NotificationType.COMPANY_REGISTERED)
-//                        .message("New company registration pending: " + request.getCompanyName())  // Changed
-//                        .build();
-//                notificationRepository.save(notification);
-//            }
-//        }
+        if (wasteCompanyRepository.existsByName(request.getCompanyName())) {
+            throw new BadRequestException("Company name already exists");
+        }
     }
 }

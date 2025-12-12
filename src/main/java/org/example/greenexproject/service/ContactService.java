@@ -1,4 +1,4 @@
-package org.example.greenexproject.Service;
+package org.example.greenexproject.service;
 
 import org.example.greenexproject.dto.request.ContactRequest;
 import org.example.greenexproject.dto.response.ContactResponse;

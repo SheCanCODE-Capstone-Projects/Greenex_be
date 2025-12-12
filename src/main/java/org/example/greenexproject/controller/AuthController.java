@@ -11,7 +11,7 @@ import org.example.greenexproject.dto.response.AuthResponse;
 import org.example.greenexproject.dto.response.MessageResponse;
 import org.example.greenexproject.model.entity.CompanyRegistrationRequest;
 import org.example.greenexproject.security.UserPrincipal;
-import org.example.greenexproject.Service.AuthService;
+import org.example.greenexproject.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -10,7 +10,7 @@ import org.apache.coyote.BadRequestException;
 import org.example.greenexproject.dto.request.RejectCompanyRequest;
 import org.example.greenexproject.dto.response.MessageResponse;
 import org.example.greenexproject.dto.response.WasteCompanyResponse;
-import org.example.greenexproject.Service.AdminService;
+import org.example.greenexproject.service.AdminService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
