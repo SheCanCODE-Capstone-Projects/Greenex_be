@@ -10,7 +10,9 @@ import org.example.greenexproject.dto.request.OtpVerificationRequest;
 import org.example.greenexproject.dto.request.RegisterRequest;
 import org.example.greenexproject.dto.response.AuthResponse;
 import org.example.greenexproject.dto.response.MessageResponse;
-import org.example.greenexproject.model.entity.CompanyRegistrationRequest;
+
+import org.example.greenexproject.dto.request.CompanyRegistrationRequest;
+
 import org.example.greenexproject.security.UserPrincipal;
 import org.example.greenexproject.service.AuthService;
 import org.example.greenexproject.service.OtpService;
