@@ -1,4 +1,4 @@
-package org.example.greenexproject.Controller;
+package org.example.greenexproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
