@@ -1,4 +1,4 @@
-package org.example.greenexproject.Config;
+package org.example.greenexproject.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

@@ -1,4 +1,4 @@
-package org.example.greenexproject.Controller;
+package org.example.greenexproject.controller;
 
 import org.example.greenexproject.model.entity.WasteCompany;
 import org.example.greenexproject.service.WasteCompanyService;
