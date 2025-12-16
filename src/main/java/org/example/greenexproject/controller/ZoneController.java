@@ -11,7 +11,6 @@ import org.example.greenexproject.dto.response.MessageResponse;
 import org.example.greenexproject.dto.response.ZoneResponse;
 import org.example.greenexproject.security.UserPrincipal;
 import org.example.greenexproject.service.ZoneService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

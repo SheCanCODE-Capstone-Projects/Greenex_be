@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.greenexproject.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -28,6 +29,7 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
@@ -35,21 +37,32 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                .cors(cors -> {})
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // PUBLIC
+                        .requestMatchers("/api/contact").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
+
+                        // ADMIN ONLY
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // OTHER ROLES
                         .requestMatchers("/api/manager/**").hasRole("COMPANY_MANAGER")
                         .requestMatchers("/api/driver/**").hasRole("COMPANY_DRIVER")
                         .requestMatchers("/api/citizen/**").hasRole("CITIZEN")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -62,7 +75,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
