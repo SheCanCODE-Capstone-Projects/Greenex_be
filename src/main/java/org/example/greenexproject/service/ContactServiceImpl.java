@@ -54,6 +54,10 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public void deleteContact(UUID id) {
+        Contact contact = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contact message not found"));
+        repository.delete(contact);
+
 
     }
 
