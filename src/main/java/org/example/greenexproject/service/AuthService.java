@@ -1,4 +1,4 @@
-package org.example.greenexproject.Service;
+package org.example.greenexproject.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,8 @@ import org.example.greenexproject.model.entity.*;
 import org.example.greenexproject.model.enums.*;
 import org.example.greenexproject.repository.*;
 import org.example.greenexproject.security.JwtTokenProvider;
+import org.example.greenexproject.service.EmailService;
+import org.example.greenexproject.service.OtpService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
