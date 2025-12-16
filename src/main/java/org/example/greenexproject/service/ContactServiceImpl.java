@@ -45,12 +45,6 @@ public class ContactServiceImpl implements ContactService {
                 .orElseThrow(() -> new RuntimeException("Contact message not found"));
     }
 
-    @Override
-    public void markProcessed(UUID id) {
-        Contact m = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        m.setProcessed(true);
-        repository.save(m);
-    }
 
     @Override
     public void deleteContact(UUID id) {
