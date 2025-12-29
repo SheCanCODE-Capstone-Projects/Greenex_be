@@ -1,5 +1,6 @@
 package org.example.greenexproject.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Random;
 
+@Slf4j
 @Service
 public class OtpService {
 
@@ -27,6 +29,7 @@ public class OtpService {
     public String generateOtp(String email) {
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000);
+        log.info("The otp is " + otp);
         Instant expiresAt = Instant.now().plusSeconds(300);
         otpStore.put(String.valueOf(otp), new OtpEntry(email, expiresAt));
         return String.valueOf(otp);

@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16
+    container_name: greenex-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: greenexdb
+      POSTGRES_USER: greenexdb_user
+      POSTGRES_PASSWORD: greenexdb_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: src/main/resources/templates
+    container_name: greenex-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      DB_URL: jdbc:postgresql://db:5432/greenexdb
+      DB_USERNAME: greenexdb_user
+      DB_PASSWORD: greenexdb_pass
+      JWT_SECRET: ${JWT_SECRET:-change-me}
+      MAIL_USERNAME: ${MAIL_USERNAME:-you@example.com}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-app-password}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  db_data:
