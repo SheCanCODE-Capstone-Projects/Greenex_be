@@ -30,11 +30,11 @@ public class ComplaintServiceImpl implements ComplaintService {
     @Override
     public ComplaintResponse createComplaint(ComplaintRequest request) {
 
-        // 1️⃣ Find the household
+        // Find the household
         Household household = householdRepository.findById(request.getHouseholdId())
                 .orElseThrow(() -> new RuntimeException("Household not found"));
 
-        // 2️⃣ Create and save complaint
+        //  Create and save complaint
         Complaint savedComplaint = complaintRepository.save(
                 Complaint.builder()
                         .household(household)
@@ -43,15 +43,15 @@ public class ComplaintServiceImpl implements ComplaintService {
                         .build()
         );
 
-        // 3️⃣ Find the company manager (use correct repository method)
+        //  Find the company manager (use correct repository method)
         CompanyUser managerCompanyUser = companyUserRepository.findByWasteCompanyIdAndRole(
                 household.getWasteCompany().getId(), CompanyRole.MANAGER
         ).orElseThrow(() -> new RuntimeException("Company manager not found"));
 
-        // 4️⃣ Get the SystemUser for Notification
+        //  Get the SystemUser for Notification
         SystemUser managerUser = managerCompanyUser.getSystemUser();
 
-        // 5️⃣ Create and save Notification
+        //  Create and save Notification
         Notification notification = Notification.builder()
                 .recipientUser(managerUser)
                 .type(NotificationType.COMPLAINT)
