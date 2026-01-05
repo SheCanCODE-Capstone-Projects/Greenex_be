@@ -1,8 +1,8 @@
 package org.example.greenexproject.service;
 
 import org.example.greenexproject.dto.request.ComplaintRequest;
-import org.example.greenexproject.model.entity.Complaint;
+import org.example.greenexproject.dto.response.ComplaintResponse;
 
 public interface ComplaintService {
-    Complaint createComplaint(ComplaintRequest request);
+    ComplaintResponse createComplaint(ComplaintRequest request);
 }

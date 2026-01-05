@@ -2,7 +2,7 @@ package org.example.greenexproject.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.greenexproject.dto.request.ComplaintRequest;
-import org.example.greenexproject.model.entity.Complaint;
+import org.example.greenexproject.dto.response.ComplaintResponse;
 import org.example.greenexproject.service.ComplaintService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class ComplaintController {
     private final ComplaintService complaintService;
 
     @PostMapping
-    public ResponseEntity<Complaint> createComplaint(
+    public ResponseEntity<ComplaintResponse> createComplaint(
             @RequestBody ComplaintRequest request) {
 
         return ResponseEntity

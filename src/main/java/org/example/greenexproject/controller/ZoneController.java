@@ -76,4 +76,5 @@ public class ZoneController {
         zoneService.deleteZone(id, principal.getCompanyId());
         return ResponseEntity.ok(new MessageResponse("Zone deleted successfully"));
     }
+
 }

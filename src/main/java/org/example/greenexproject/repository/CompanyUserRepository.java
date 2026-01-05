@@ -16,6 +16,7 @@ import java.util.UUID;
 
 @Repository
 public interface CompanyUserRepository extends JpaRepository<CompanyUser, UUID> {
+
     Optional<CompanyUser> findBySystemUser_IdAndWasteCompany_Id(UUID systemUserId, UUID companyId);
 
     Optional<CompanyUser> findBySystemUser_Id(UUID systemUserId);
@@ -27,4 +28,7 @@ public interface CompanyUserRepository extends JpaRepository<CompanyUser, UUID> 
 
     @Query("SELECT cu FROM CompanyUser cu WHERE cu.wasteCompany.id = :companyId AND cu.role = :role")
     List<CompanyUser> findManagersByCompany(@Param("companyId") UUID companyId, @Param("role") CompanyRole role);
+
+    // ✅ NEW: Find the single manager of a company
+    Optional<CompanyUser> findByWasteCompanyIdAndRole(UUID companyId, CompanyRole role);
 }

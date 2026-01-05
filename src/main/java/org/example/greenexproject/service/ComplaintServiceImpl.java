@@ -2,13 +2,19 @@ package org.example.greenexproject.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.greenexproject.dto.request.ComplaintRequest;
-import org.example.greenexproject.dto.request.NotificationRequest;
+import org.example.greenexproject.dto.response.ComplaintResponse;
 import org.example.greenexproject.dto.response.NotificationResponse;
+import org.example.greenexproject.model.entity.CompanyUser;
 import org.example.greenexproject.model.entity.Complaint;
 import org.example.greenexproject.model.entity.Household;
+import org.example.greenexproject.model.entity.Notification;
+import org.example.greenexproject.model.entity.SystemUser;
+import org.example.greenexproject.model.enums.CompanyRole;
 import org.example.greenexproject.model.enums.NotificationType;
 import org.example.greenexproject.repository.ComplaintRepository;
+import org.example.greenexproject.repository.CompanyUserRepository;
 import org.example.greenexproject.repository.HouseholdRepository;
+import org.example.greenexproject.repository.NotificationRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,40 +23,61 @@ public class ComplaintServiceImpl implements ComplaintService {
 
     private final ComplaintRepository complaintRepository;
     private final HouseholdRepository householdRepository;
-    private final NotificationService notificationService;
-    private final NotificationWebSocketService webSocketService; // added WebSocket
+    private final CompanyUserRepository companyUserRepository;
+    private final NotificationRepository notificationRepository;
+    private final NotificationWebSocketService webSocketService;
 
     @Override
-    public Complaint createComplaint(ComplaintRequest request) {
+    public ComplaintResponse createComplaint(ComplaintRequest request) {
 
+        // 1️⃣ Find the household
         Household household = householdRepository.findById(request.getHouseholdId())
-                .orElseThrow(() ->
-                        new RuntimeException("Household not found"));
+                .orElseThrow(() -> new RuntimeException("Household not found"));
 
-        Complaint complaint = Complaint.builder()
-                .household(household)
-                .type(request.getType())
-                .description(request.getDescription())
-                .build();
-
-        Complaint savedComplaint = complaintRepository.save(complaint);
-
-        //  Create DB notification
-        NotificationResponse notificationResponse = notificationService.createNotification(
-                NotificationRequest.builder()
-                        .companyId(household.getWasteCompany().getId())
-                        .type(NotificationType.COMPLAINT)
-                        .message("New complaint from household " + household.getCode())
-                        .complaintId(savedComplaint.getId())
+        // 2️⃣ Create and save complaint
+        Complaint savedComplaint = complaintRepository.save(
+                Complaint.builder()
+                        .household(household)
+                        .type(request.getType())
+                        .description(request.getDescription())
                         .build()
         );
 
-        //  Send real-time WebSocket notification
-        webSocketService.sendToCompany(
-                household.getWasteCompany().getId(),
-                notificationResponse
-        );
+        // 3️⃣ Find the company manager (use correct repository method)
+        CompanyUser managerCompanyUser = companyUserRepository.findByWasteCompanyIdAndRole(
+                household.getWasteCompany().getId(), CompanyRole.MANAGER
+        ).orElseThrow(() -> new RuntimeException("Company manager not found"));
 
-        return savedComplaint;
+        // 4️⃣ Get the SystemUser for Notification
+        SystemUser managerUser = managerCompanyUser.getSystemUser();
+
+        // 5️⃣ Create and save Notification
+        Notification notification = Notification.builder()
+                .recipientUser(managerUser)
+                .type(NotificationType.COMPLAINT)
+                .message("New complaint from household " + household.getCode())
+                .build();
+
+        Notification savedNotification = notificationRepository.save(notification);
+
+        // Send WebSocket notification
+        NotificationResponse notificationResponse = NotificationResponse.builder()
+                .id(savedNotification.getId())
+                .type(savedNotification.getType().name())
+                .message(savedNotification.getMessage())
+                .createdAt(savedNotification.getCreatedAt())
+                .build();
+
+        webSocketService.sendToCompany(household.getWasteCompany().getId(), notificationResponse);
+
+        //  Return ComplaintResponse
+        return ComplaintResponse.builder()
+                .id(savedComplaint.getId())
+                .type(savedComplaint.getType().name()) // Convert enum to string
+                .description(savedComplaint.getDescription())
+                .createdAt(savedComplaint.getCreatedAt())
+                .householdId(household.getId())
+                .wasteCompanyId(household.getWasteCompany().getId())
+                .build();
     }
 }
