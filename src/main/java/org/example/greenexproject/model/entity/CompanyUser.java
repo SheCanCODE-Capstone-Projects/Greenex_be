@@ -35,6 +35,9 @@ public class CompanyUser {
     @Column(nullable = false, length = 20)
     private CompanyRole role;
 
+    @Column(length = 50)
+    private String licenseNumber;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
