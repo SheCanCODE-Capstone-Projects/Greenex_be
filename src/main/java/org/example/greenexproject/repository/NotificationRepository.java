@@ -1,5 +1,4 @@
 package org.example.greenexproject.repository;
-
 import org.example.greenexproject.model.entity.Notification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,4 +16,6 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
     long countByRecipientUser_IdAndReadAtIsNull(UUID recipientUserId);
     long countByRecipientUser_Id(UUID recipientUserId);
+    // Get all notifications for a specific user
+    List<Notification> findByRecipientUser_Id(UUID userId);
 }
