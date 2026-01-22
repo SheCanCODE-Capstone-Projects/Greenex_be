@@ -13,15 +13,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(
-                        "http://localhost:8888",  // Swagger UI + backend same port
-                        "http://localhost:3000",  // React or frontend
-                        "http://127.0.0.1:5500"   // Static HTML testing
-                )
+                .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .exposedHeaders("Authorization")
-                .allowCredentials(false);
+                .exposedHeaders("Authorization");
     }
 
     @Override
