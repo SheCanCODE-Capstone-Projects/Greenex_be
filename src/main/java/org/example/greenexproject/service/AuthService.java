@@ -192,7 +192,7 @@ public class AuthService {
             throw new BadRequestException("RDB document is required");
         }
 
-        // Store documents (TODO: Implement proper file storage service)
+        // Store documents
         String remaDocUrl = storeDocument(request.getRemaDocument(), "rema");
         String kigaliDocUrl = storeDocument(request.getCityOfKigaliDocument(), "kigali");
         String rdbDocUrl = storeDocument(request.getRdbDocument(), "rdb");
