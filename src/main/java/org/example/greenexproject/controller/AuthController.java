@@ -44,11 +44,11 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/company/register")
+    @PostMapping(value = "/company/register", consumes = "multipart/form-data")
     @Operation(summary = "Register company", description = "Manager registers their waste company")
     public ResponseEntity<MessageResponse> registerCompany(
             @AuthenticationPrincipal UserPrincipal currentUser,
-            @Valid @RequestBody CompanyRegistrationRequest request) throws BadRequestException {
+            @Valid @ModelAttribute CompanyRegistrationRequest request) throws BadRequestException {
         authService.registerCompany(currentUser.getUserId(), request);
         return ResponseEntity.ok(new MessageResponse(
                 "Company registration submitted successfully. Awaiting admin approval."));

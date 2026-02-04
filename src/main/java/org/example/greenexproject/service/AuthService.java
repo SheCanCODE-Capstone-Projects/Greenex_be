@@ -1,5 +1,6 @@
 package org.example.greenexproject.service;
 
+import com.cloudinary.Cloudinary;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
@@ -31,6 +32,8 @@ public class AuthService {
     private final NotificationRepository notificationRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CloudinaryService cloudinaryService;
+
 
     private final OtpService otpService;
     private final EmailService emailService;
@@ -165,6 +168,7 @@ public class AuthService {
     }
 
     public void registerCompany(UUID managerId, CompanyRegistrationRequest request) throws BadRequestException {
+        // Validate manager user exists
         SystemUser manager = systemUserRepository.findById(managerId)
                 .orElseThrow(() -> new BadRequestException("Manager user not found"));
 
@@ -172,19 +176,34 @@ public class AuthService {
             throw new BadRequestException("Only company managers can register companies");
         }
 
+        // Check if company name already exists
         if (wasteCompanyRepository.existsByName(request.getName())) {
             throw new BadRequestException("Company name already exists");
         }
 
-        if (request.getContractNumber() != null &&
-                wasteCompanyRepository.existsByContractNumber(request.getContractNumber())) {
-            throw new BadRequestException("Contract number already exists");
+        // Validate documents
+        if (request.getRemaDocument() == null || request.getRemaDocument().isEmpty()) {
+            throw new BadRequestException("REMA document is required");
+        }
+        if (request.getCityOfKigaliDocument() == null || request.getCityOfKigaliDocument().isEmpty()) {
+            throw new BadRequestException("City of Kigali document is required");
+        }
+        if (request.getRdbDocument() == null || request.getRdbDocument().isEmpty()) {
+            throw new BadRequestException("RDB document is required");
         }
 
+        // Store documents (TODO: Implement proper file storage service)
+        String remaDocUrl = storeDocument(request.getRemaDocument(), "rema");
+        String kigaliDocUrl = storeDocument(request.getCityOfKigaliDocument(), "kigali");
+        String rdbDocUrl = storeDocument(request.getRdbDocument(), "rdb");
+
+        // Create company
         WasteCompany company = WasteCompany.builder()
                 .name(request.getName())
-                .contractNumber(request.getContractNumber())
                 .sectorCoverage(request.getSectorCoverage())
+                .remaDocumentUrl(remaDocUrl)
+                .cityOfKigaliDocumentUrl(kigaliDocUrl)
+                .rdbDocumentUrl(rdbDocUrl)
                 .createdBy(manager)
                 .status(UserStatus.INACTIVE)
                 .registrationStatus(RegistrationStatus.PENDING)
@@ -192,6 +211,7 @@ public class AuthService {
 
         company = wasteCompanyRepository.save(company);
 
+        // Create company user relationship
         CompanyUser companyUser = CompanyUser.builder()
                 .systemUser(manager)
                 .wasteCompany(company)
@@ -201,14 +221,26 @@ public class AuthService {
 
         companyUserRepository.save(companyUser);
 
+        // Notify all admins
         List<AdminUser> admins = adminUserRepository.findAll();
         for (AdminUser admin : admins) {
             Notification notification = Notification.builder()
                     .recipientUser(admin.getSystemUser())
                     .type(NotificationType.COMPANY_REGISTERED)
+                    .title("New Company Registration")
                     .message("New company registration pending: " + request.getName())
+                    .relatedEntityId(company.getId())
                     .build();
             notificationRepository.save(notification);
+        }
+    }
+
+    private String storeDocument(org.springframework.web.multipart.MultipartFile file, String type) throws BadRequestException {
+        try {
+            // Upload to Cloudinary in the company-documents folder
+            return cloudinaryService.uploadFile(file, "greenex/company-documents/" + type);
+        } catch (Exception e) {
+            throw new BadRequestException("Failed to store " + type + " document: " + e.getMessage());
         }
     }
 }

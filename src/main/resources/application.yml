@@ -59,3 +59,11 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     enabled: true
+
+cloudinary:
+  cloud:
+    name: ${CLOUDINARY_CLOUD_NAME:dfc8hjhyc}
+  api:
+    key: ${CLOUDINARY_API_KEY:337836862294537}
+    secret: ${CLOUDINARY_API_SECRET:ym3eK_sfVRVLjdmFoGuQnEsXkkE}
+
