@@ -36,7 +36,7 @@ public class ZoneController {
     public ResponseEntity<ZoneResponse> createZone(
             @AuthenticationPrincipal UserPrincipal principal,
             @Valid @RequestBody CreateZoneRequest request) {
-        ZoneResponse response = zoneService.createZone(principal.getCompanyId(), request);
+        ZoneResponse response = zoneService.createZone(principal.getUserId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -45,7 +45,7 @@ public class ZoneController {
     public ResponseEntity<Page<ZoneResponse>> getZones(
             @AuthenticationPrincipal UserPrincipal principal,
             @PageableDefault(size = 20) Pageable pageable) {
-        Page<ZoneResponse> zones = zoneService.getZonesByCompany(principal.getCompanyId(), pageable);
+        Page<ZoneResponse> zones = zoneService.getZonesByCompany(principal.getUserId(), pageable);
         return ResponseEntity.ok(zones);
     }
 
@@ -54,7 +54,7 @@ public class ZoneController {
     public ResponseEntity<ZoneResponse> getZoneById(
             @PathVariable UUID id,
             @AuthenticationPrincipal UserPrincipal principal) {
-        ZoneResponse zone = zoneService.getZoneById(id, principal.getCompanyId());
+        ZoneResponse zone = zoneService.getZoneById(id, principal.getUserId());
         return ResponseEntity.ok(zone);
     }
 
@@ -64,7 +64,7 @@ public class ZoneController {
             @PathVariable UUID id,
             @AuthenticationPrincipal UserPrincipal principal,
             @Valid @RequestBody UpdateZoneRequest request) {
-        ZoneResponse response = zoneService.updateZone(id, principal.getCompanyId(), request);
+        ZoneResponse response = zoneService.updateZone(id, principal.getUserId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -73,7 +73,7 @@ public class ZoneController {
     public ResponseEntity<MessageResponse> deleteZone(
             @PathVariable UUID id,
             @AuthenticationPrincipal UserPrincipal principal) {
-        zoneService.deleteZone(id, principal.getCompanyId());
+        zoneService.deleteZone(id, principal.getUserId());
         return ResponseEntity.ok(new MessageResponse("Zone deleted successfully"));
     }
 

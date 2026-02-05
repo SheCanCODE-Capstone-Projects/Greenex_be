@@ -6,8 +6,10 @@ import org.example.greenexproject.dto.request.UpdateZoneRequest;
 import org.example.greenexproject.dto.response.ZoneResponse;
 import org.example.greenexproject.exception.BadRequestException;
 import org.example.greenexproject.exception.ResourceNotFoundException;
+import org.example.greenexproject.model.entity.CompanyUser;
 import org.example.greenexproject.model.entity.WasteCompany;
 import org.example.greenexproject.model.entity.Zone;
+import org.example.greenexproject.repository.CompanyUserRepository;
 import org.example.greenexproject.repository.HouseholdRepository;
 import org.example.greenexproject.repository.WasteCompanyRepository;
 import org.example.greenexproject.repository.ZoneRepository;
@@ -24,9 +26,16 @@ public class ZoneService {
     private final ZoneRepository zoneRepository;
     private final WasteCompanyRepository wasteCompanyRepository;
     private final HouseholdRepository householdRepository;
+    private final CompanyUserRepository companyUserRepository;
 
     @Transactional
-    public ZoneResponse createZone(UUID companyId, CreateZoneRequest request) {
+    public ZoneResponse createZone(UUID userId, CreateZoneRequest request) {
+        // Fetch companyId from database using userId
+        CompanyUser companyUser = companyUserRepository.findBySystemUser_Id(userId)
+                .orElseThrow(() -> new BadRequestException("User is not associated with any company"));
+
+        UUID companyId = companyUser.getWasteCompany().getId();
+
         WasteCompany company = wasteCompanyRepository.findById(companyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Company", "id", companyId));
 
@@ -49,13 +58,25 @@ public class ZoneService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ZoneResponse> getZonesByCompany(UUID companyId, Pageable pageable) {
+    public Page<ZoneResponse> getZonesByCompany(UUID userId, Pageable pageable) {
+        // Fetch companyId from database using userId
+        CompanyUser companyUser = companyUserRepository.findBySystemUser_Id(userId)
+                .orElseThrow(() -> new BadRequestException("User is not associated with any company"));
+
+        UUID companyId = companyUser.getWasteCompany().getId();
+
         Page<Zone> zones = zoneRepository.findByWasteCompany_Id(companyId, pageable);
         return zones.map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
-    public ZoneResponse getZoneById(UUID zoneId, UUID companyId) {
+    public ZoneResponse getZoneById(UUID zoneId, UUID userId) {
+        // Fetch companyId from database using userId
+        CompanyUser companyUser = companyUserRepository.findBySystemUser_Id(userId)
+                .orElseThrow(() -> new BadRequestException("User is not associated with any company"));
+
+        UUID companyId = companyUser.getWasteCompany().getId();
+
         Zone zone = zoneRepository.findById(zoneId)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", zoneId));
 
@@ -68,7 +89,13 @@ public class ZoneService {
     }
 
     @Transactional
-    public ZoneResponse updateZone(UUID zoneId, UUID companyId, UpdateZoneRequest request) {
+    public ZoneResponse updateZone(UUID zoneId, UUID userId, UpdateZoneRequest request) {
+        // Fetch companyId from database using userId
+        CompanyUser companyUser = companyUserRepository.findBySystemUser_Id(userId)
+                .orElseThrow(() -> new BadRequestException("User is not associated with any company"));
+
+        UUID companyId = companyUser.getWasteCompany().getId();
+
         Zone zone = zoneRepository.findById(zoneId)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", zoneId));
 
@@ -98,7 +125,13 @@ public class ZoneService {
     }
 
     @Transactional
-    public void deleteZone(UUID zoneId, UUID companyId) {
+    public void deleteZone(UUID zoneId, UUID userId) {
+        // Fetch companyId from database using userId
+        CompanyUser companyUser = companyUserRepository.findBySystemUser_Id(userId)
+                .orElseThrow(() -> new BadRequestException("User is not associated with any company"));
+
+        UUID companyId = companyUser.getWasteCompany().getId();
+
         Zone zone = zoneRepository.findById(zoneId)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", zoneId));
 
