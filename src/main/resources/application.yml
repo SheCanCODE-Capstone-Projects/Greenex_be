@@ -62,8 +62,8 @@ springdoc:
 
 cloudinary:
   cloud:
-    name: ${CLOUDINARY_CLOUD_NAME:dfc8hjhyc}
+    name: ${CLOUDINARY_CLOUD_NAME}
   api:
-    key: ${CLOUDINARY_API_KEY:337836862294537}
-    secret: ${CLOUDINARY_API_SECRET:ym3eK_sfVRVLjdmFoGuQnEsXkkE}
+    key: ${CLOUDINARY_API_KEY}
+    secret: ${CLOUDINARY_API_SECRET}
 
