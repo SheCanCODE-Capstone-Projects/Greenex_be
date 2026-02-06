@@ -66,6 +66,7 @@ public class AdminService {
             Notification notification = Notification.builder()
                     .recipientUser(manager.getSystemUser())
                     .type(NotificationType.COMPANY_APPROVED)
+                    .title("Company Approved")
                     .message("Your company '" + company.getName() +
                             "' has been approved! You can now start configuring your services.")
                     .build();
@@ -93,6 +94,7 @@ public class AdminService {
             Notification notification = Notification.builder()
                     .recipientUser(manager.getSystemUser())
                     .type(NotificationType.COMPANY_REJECTED)
+                    .title("Company Registration Rejected")
                     .message("Your Company Registration for '" + company.getName() +
                             "' has been rejected. Reason: " + request.getReason())
                     .build();

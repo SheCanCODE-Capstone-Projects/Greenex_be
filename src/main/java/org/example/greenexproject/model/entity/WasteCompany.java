@@ -37,6 +37,15 @@ public class WasteCompany {
     @Column(length = 500)
     private String sectorCoverage;
 
+    @Column(length = 500)
+    private String remaDocumentUrl;
+
+    @Column(length = 500)
+    private String cityOfKigaliDocumentUrl;
+
+    @Column(length = 500)
+    private String rdbDocumentUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default

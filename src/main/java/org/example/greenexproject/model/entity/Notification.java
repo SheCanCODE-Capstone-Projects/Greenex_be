@@ -30,8 +30,14 @@ public class Notification {
     @Column(nullable = false, length = 50)
     private NotificationType type;
 
+    @Column(nullable = false, length = 200)
+    private String title;
+
     @Column(nullable = false, length = 1000)
     private String message;
+
+    @Column
+    private UUID relatedEntityId;
 
     @Column(columnDefinition = "TEXT")
     private String metadata;
