@@ -34,7 +34,7 @@ public class OpenApiConfig {
                                 .url("http://localhost:8080")
                                 .description("Local Development"),
                         new Server()
-                                .url("https://greenex-be.onrender.com")
+                                .url("https://greenex-be-28wt.onrender.com")
                                 .description("Production")))
                 .components(new Components()
                         .addSecuritySchemes("Bearer Authentication",
