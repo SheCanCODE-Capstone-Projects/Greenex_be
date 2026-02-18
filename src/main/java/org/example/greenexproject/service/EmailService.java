@@ -14,7 +14,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${MAIL_USERNAME}")
+    @Value("${MAIL_FROM}")
     private String fromEmail;
 
     public void sendOtpEmail(String toEmail, String otp) {
