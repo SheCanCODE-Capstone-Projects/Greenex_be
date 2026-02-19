@@ -1,6 +1,7 @@
 package org.example.greenexproject.repository;
 
 import org.example.greenexproject.model.entity.Household;
+import org.example.greenexproject.model.enums.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +13,5 @@ public interface HouseholdRepository extends JpaRepository<Household, UUID> {
     long countByZone_Id(UUID zoneId);
     boolean existsByCode(String code);
     List<Household> findByZone_Id(UUID zoneId);
+    List<Household> findByWasteCompany_IdAndStatus(UUID companyId, UserStatus status);
 }

@@ -1,0 +1,16 @@
+package org.example.greenexproject.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class GenerateBillingRequest {
+    @NotBlank(message = "Period month is required")
+    @Pattern(regexp = "\\d{4}-\\d{2}", message = "Period month must be in format YYYY-MM")
+    private String periodMonth;  // Format: YYYY-MM
+}

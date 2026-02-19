@@ -12,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -31,6 +32,10 @@ public class Payment {
     private Household household;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "waste_company_id", nullable = false)
+    private WasteCompany wasteCompany;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tariff_rule_id")
     private TariffRule tariffRule;
 
@@ -39,6 +44,9 @@ public class Payment {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
+
+    @Column
+    private LocalDate dueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
