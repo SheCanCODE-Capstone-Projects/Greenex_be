@@ -39,6 +39,15 @@ public class AdminController {
         return ResponseEntity.ok(companies);
     }
 
+    @GetMapping("/companies/approved")
+    @Operation(summary = "Get approved companies",
+            description = "Retrieve all companies with APPROVED registration status")
+    public ResponseEntity<Page<WasteCompanyResponse>> getApprovedCompanies(
+            @PageableDefault(size = 20) Pageable pageable) {
+        Page<WasteCompanyResponse> companies = adminService.getApprovedCompanies(pageable);
+        return ResponseEntity.ok(companies);
+    }
+
     @PostMapping("/companies/{companyId}/approve")
     @Operation(summary = "Approve company",
             description = "Approve a pending company registration")

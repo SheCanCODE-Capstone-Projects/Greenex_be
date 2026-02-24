@@ -19,5 +19,6 @@ public interface PickupSessionRepository extends JpaRepository<PickupSession, UU
 
     List<PickupSession> findByDriverUser_IdAndDate(UUID driverUserId, LocalDate date);
 
+    List<PickupSession> findByDriverUser_IdAndDateAfter(UUID driverUserId, LocalDate date);
 
 }
