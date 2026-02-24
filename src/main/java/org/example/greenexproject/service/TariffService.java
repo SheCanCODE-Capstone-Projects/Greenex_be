@@ -168,6 +168,7 @@ public class TariffService {
                 .tariffPlanId(rule.getTariffPlan().getId())
                 .tariffPlanName(rule.getTariffPlan().getName())
                 .houseType(rule.getHouseType())
+                .pickupFrequencyPerWeek(rule.getPickupFrequencyPerWeek())
                 .amount(rule.getAmount())
                 .createdAt(rule.getCreatedAt());
 

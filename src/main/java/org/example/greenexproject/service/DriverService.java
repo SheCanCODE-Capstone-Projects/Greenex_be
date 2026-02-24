@@ -39,11 +39,9 @@ public class DriverService {
     @Transactional(readOnly = true)
     public List<SessionResponse> getUpcomingSessions(UUID driverUserId) {
         List<PickupSession> sessions = pickupSessionRepository
-                .findByDriverUser_IdAndDate(driverUserId, LocalDate.now().plusDays(1));
+                .findByDriverUser_IdAndDateAfter(driverUserId, LocalDate.now());
 
-        // Filter to get future sessions
         return sessions.stream()
-                .filter(s -> s.getDate().isAfter(LocalDate.now()))
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

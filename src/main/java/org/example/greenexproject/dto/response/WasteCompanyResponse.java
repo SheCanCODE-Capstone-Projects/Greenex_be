@@ -24,6 +24,9 @@ public class WasteCompanyResponse {
     private RegistrationStatus registrationStatus;
     private String createdByName;
     private String createdByEmail;
+    private String remaDocumentUrl;
+    private String cityOfKigaliDocumentUrl;
+    private String rdbDocumentUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

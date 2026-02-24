@@ -102,6 +102,13 @@ public class AdminService {
         }
     }
 
+    public Page<WasteCompanyResponse> getApprovedCompanies(Pageable pageable) {
+        Page<WasteCompany> companies = wasteCompanyRepository
+                .findByRegistrationStatus(RegistrationStatus.APPROVED, pageable);
+
+        return companies.map(this::mapToResponse);
+    }
+
     private WasteCompanyResponse mapToResponse(WasteCompany company) {
         return WasteCompanyResponse.builder()
                 .id(company.getId())
@@ -112,6 +119,9 @@ public class AdminService {
                 .registrationStatus(company.getRegistrationStatus())
                 .createdByName(company.getCreatedBy().getFullName())
                 .createdByEmail(company.getCreatedBy().getEmail())
+                .remaDocumentUrl(company.getRemaDocumentUrl())
+                .cityOfKigaliDocumentUrl(company.getCityOfKigaliDocumentUrl())
+                .rdbDocumentUrl(company.getRdbDocumentUrl())
                 .createdAt(company.getCreatedAt())
                 .build();
     }

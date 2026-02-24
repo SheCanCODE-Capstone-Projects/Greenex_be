@@ -28,6 +28,7 @@ public class TariffRuleResponse {
     // House type (if applicable)
     private HouseType houseType;
 
+    private Integer pickupFrequencyPerWeek;
     private BigDecimal amount;
     private LocalDateTime createdAt;
 }
