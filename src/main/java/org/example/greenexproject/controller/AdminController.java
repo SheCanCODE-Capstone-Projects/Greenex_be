@@ -25,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Admin", description = "Admin management endpoints")
 @SecurityRequirement(name = "Bearer Authentication")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_MANAGER')")
 public class AdminController {
 
     private final AdminService adminService;
