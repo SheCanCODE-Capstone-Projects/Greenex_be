@@ -28,4 +28,4 @@ replay_pid*
 .gitignore
 branch_structure.json
 node_modules
-.env
+config.bat
