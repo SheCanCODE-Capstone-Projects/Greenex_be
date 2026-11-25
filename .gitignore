@@ -12,7 +12,6 @@ target/
 *.log
 
 # Archives
-temp_auto_push.bat
 *.jar
 *.war
 *.nar
@@ -28,5 +27,5 @@ replay_pid*
 # Environment variables
 .gitignore
 branch_structure.json
-config.bat
 node_modules
+.env
